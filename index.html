@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MacroCount - Trova Alimenti per Macro</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- Header dell'applicazione -->
+    <header class="app-header">
+      <div class="logo-section">
+        <span class="logo-icon">⚖️</span>
+        <h1>MacroCount</h1>
+      </div>
+      
+      <!-- Navigazione tra le schede -->
+      <div class="nav-tabs">
+        <button id="tab-calc-btn" class="nav-btn active">Calcolatore</button>
+        <button id="tab-db-btn" class="nav-btn">Database Alimenti</button>
+      </div>
+    </header>
+
+    <!-- Contenuto Principale -->
+    <main class="app-content">
+      
+      <!-- VISTA 1: CALCOLATORE (Default) -->
+      <div id="view-calculator" class="calculator-layout">
+        
+        <!-- Sidebar dei Filtri -->
+        <aside class="sidebar-filters">
+          
+          <!-- Filtro Principale: Quantità e tipo macro -->
+          <div class="filter-group">
+            <h3 class="filter-section-title">🎯 Target Principale</h3>
+            
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label for="target-grams">Quantità desiderata (g)</label>
+              <input type="number" id="target-grams" class="input-control" value="15" min="1" step="1">
+            </div>
+            
+            <div class="form-group">
+              <label for="primary-macro">Macronutriente principale</label>
+              <select id="primary-macro" class="input-control">
+                <option value="protein">Proteine</option>
+                <option value="carbs">Carboidrati</option>
+                <option value="fat">Grassi</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Filtro Regime Alimentare -->
+          <div class="filter-group">
+            <h3 class="filter-section-title">🌱 Regime Alimentare</h3>
+            <div class="diet-selector">
+              <button class="diet-btn active" data-diet="any">Qualsiasi</button>
+              <button class="diet-btn" data-diet="vegetarian">Vegetariano</button>
+              <button class="diet-btn" data-diet="vegan">Vegano</button>
+            </div>
+          </div>
+
+          <!-- Filtro Intolleranze (da escludere) -->
+          <div class="filter-group">
+            <h3 class="filter-section-title">🚫 Escludi Allergeni</h3>
+            <div class="allergens-list">
+              <label class="checkbox-container">
+                <input type="checkbox" class="allergen-checkbox" value="glutine">
+                <span class="checkbox-checkmark"></span>
+                <span>Contiene Glutine</span>
+              </label>
+              <label class="checkbox-container">
+                <input type="checkbox" class="allergen-checkbox" value="lattosio">
+                <span class="checkbox-checkmark"></span>
+                <span>Contiene Lattosio</span>
+              </label>
+              <label class="checkbox-container">
+                <input type="checkbox" class="allergen-checkbox" value="frutta_guscio">
+                <span class="checkbox-checkmark"></span>
+                <span>Frutta a guscio</span>
+              </label>
+              <label class="checkbox-container">
+                <input type="checkbox" class="allergen-checkbox" value="uova">
+                <span class="checkbox-checkmark"></span>
+                <span>Contiene Uova</span>
+              </label>
+              <label class="checkbox-container">
+                <input type="checkbox" class="allergen-checkbox" value="soia">
+                <span class="checkbox-checkmark"></span>
+                <span>Contiene Soia</span>
+              </label>
+              <label class="checkbox-container">
+                <input type="checkbox" class="allergen-checkbox" value="pesce">
+                <span class="checkbox-checkmark"></span>
+                <span>Contiene Pesce</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Filtri Secondari (Limiti massimi altri macro) -->
+          <div class="filter-group">
+            <h3 class="filter-section-title">⚡ Limiti Secondari</h3>
+            <div class="sec-filters-container">
+              
+              <!-- Filtro Proteine (Attivo solo se non principale) -->
+              <div class="sec-filter-card" id="sec-filter-wrapper-protein">
+                <div class="sec-filter-header">
+                  <label class="checkbox-container">
+                    <input type="checkbox" id="filter-protein-enable">
+                    <span class="checkbox-checkmark"></span>
+                    <span>Max Proteine</span>
+                  </label>
+                  <div class="sec-filter-controls">
+                    <input type="number" id="filter-protein-val" class="input-control btn-sm" value="20" min="0" disabled>
+                  </div>
+                </div>
+                <div class="range-slider-wrapper">
+                  <input type="range" id="filter-protein-slider" class="range-slider" min="0" max="100" value="20" disabled>
+                  <span class="slider-val" id="filter-protein-slider-val">20g</span>
+                </div>
+              </div>
+
+              <!-- Filtro Carboidrati (Attivo solo se non principale) -->
+              <div class="sec-filter-card" id="sec-filter-wrapper-carbs">
+                <div class="sec-filter-header">
+                  <label class="checkbox-container">
+                    <input type="checkbox" id="filter-carbs-enable">
+                    <span class="checkbox-checkmark"></span>
+                    <span>Max Carboidrati</span>
+                  </label>
+                  <div class="sec-filter-controls">
+                    <input type="number" id="filter-carbs-val" class="input-control btn-sm" value="20" min="0" disabled>
+                  </div>
+                </div>
+                <div class="range-slider-wrapper">
+                  <input type="range" id="filter-carbs-slider" class="range-slider" min="0" max="150" value="20" disabled>
+                  <span class="slider-val" id="filter-carbs-slider-val">20g</span>
+                </div>
+              </div>
+
+              <!-- Filtro Grassi (Attivo solo se non principale) -->
+              <div class="sec-filter-card" id="sec-filter-wrapper-fat">
+                <div class="sec-filter-header">
+                  <label class="checkbox-container">
+                    <input type="checkbox" id="filter-fat-enable">
+                    <span class="checkbox-checkmark"></span>
+                    <span>Max Grassi</span>
+                  </label>
+                  <div class="sec-filter-controls">
+                    <input type="number" id="filter-fat-val" class="input-control btn-sm" value="20" min="0" disabled>
+                  </div>
+                </div>
+                <div class="range-slider-wrapper">
+                  <input type="range" id="filter-fat-slider" class="range-slider" min="0" max="100" value="20" disabled>
+                  <span class="slider-val" id="filter-fat-slider-val">20g</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </aside>
+
+        <!-- Area dei Risultati (Top 10 alimenti) -->
+        <section class="results-panel">
+          <div class="results-header-row">
+            <div class="results-title-group">
+              <h2>Migliori Alimenti Compatibili</h2>
+              <p>Mostrati i primi <span id="results-count" class="font-accent">10</span> alimenti compatibili</p>
+            </div>
+            <div class="sort-controls-group" style="display: flex; gap: 0.6rem; align-items: center;">
+              <label for="sort-by-select" style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0;">Ordina per:</label>
+              <select id="sort-by-select" class="input-control btn-sm" style="width: auto; padding-right: 2rem;">
+                <option value="calories">Calorie (Kcal)</option>
+                <option value="weight">Porzione (g)</option>
+              </select>
+              <button id="sort-direction-btn" class="btn btn-sm" style="height: 32px; padding: 0 0.8rem;">
+                Crescente ↑
+              </button>
+            </div>
+          </div>
+
+          <!-- Griglia Risultati -->
+          <div id="results-list" class="results-grid">
+            <!-- Riempito via JavaScript -->
+          </div>
+        </section>
+      </div>
+
+      <!-- VISTA 2: DATABASE ALIMENTI (Nascosto di default) -->
+      <div id="view-database" class="database-layout hidden">
+        <div class="db-header">
+          <div class="db-search-bar">
+            <input type="text" id="db-search-input" class="input-control" placeholder="Cerca alimento nel database...">
+          </div>
+          <button id="btn-open-add-modal" class="btn btn-accent">+ Aggiungi Alimento Personalizzato</button>
+        </div>
+
+        <div class="db-list-container">
+          <!-- Lista alimenti riga per riga -->
+          <div id="db-foods-list">
+            <!-- Riempito via JavaScript -->
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- MODALE: AGGIUNGI ALIMENTO -->
+    <div id="add-food-modal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Aggiungi Alimento Personalizzato</h3>
+          <button id="btn-close-modal" class="close-modal-btn">&times;</button>
+        </div>
+        
+        <form id="add-food-form" class="modal-form">
+          
+          <div class="form-group">
+            <label for="new-name">Nome dell'Alimento</label>
+            <input type="text" id="new-name" class="input-control" placeholder="es. Pollo al curry, Cioccolato Fondente 90%" required>
+          </div>
+
+          <div class="form-group">
+            <label>Macronutrienti (per 100g di alimento)</label>
+            <div class="form-grid-3">
+              <div class="form-group">
+                <label for="new-protein" style="font-size: 0.75rem;">Proteine (g)</label>
+                <input type="number" id="new-protein" class="input-control" min="0" max="100" step="0.1" value="0" required>
+              </div>
+              <div class="form-group">
+                <label for="new-carbs" style="font-size: 0.75rem;">Carboidrati (g)</label>
+                <input type="number" id="new-carbs" class="input-control" min="0" max="100" step="0.1" value="0" required>
+              </div>
+              <div class="form-group">
+                <label for="new-fat" style="font-size: 0.75rem;">Grassi (g)</label>
+                <input type="number" id="new-fat" class="input-control" min="0" max="100" step="0.1" value="0" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="new-gi">Indice Glicemico (0-100)</label>
+              <input type="number" id="new-gi" class="input-control" min="0" max="100" step="1" value="0">
+            </div>
+            
+            <div class="form-group">
+              <label>Regime Alimentare</label>
+              <div style="display: flex; gap: 1rem; height: 100%; align-items: center; padding-left: 0.2rem;">
+                <label class="checkbox-container">
+                  <input type="checkbox" id="new-diet-vegetarian">
+                  <span class="checkbox-checkmark"></span>
+                  <span>Vegetariano</span>
+                </label>
+                <label class="checkbox-container">
+                  <input type="checkbox" id="new-diet-vegan">
+                  <span class="checkbox-checkmark"></span>
+                  <span>Vegano</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Allergeni Presenti</label>
+            <div class="allergen-selection-grid">
+              <label class="checkbox-container">
+                <input type="checkbox" id="new-allergen-glutine">
+                <span class="checkbox-checkmark"></span>
+                <span>Contiene Glutine</span>
+              </label>
+              <label class="checkbox-container">
+                <input type="checkbox" id="new-allergen-lattosio">
+                <span class="checkbox-checkmark"></span>
+                <span>Contiene Lattosio</span>
+              </label>
+              <label class="checkbox-container">
+                <input type="checkbox" id="new-allergen-frutta_guscio">
+                <span class="checkbox-checkmark"></span>
+                <span>Frutta a guscio</span>
+              </label>
+              <label class="checkbox-container">
+                <input type="checkbox" id="new-allergen-uova">
+                <span class="checkbox-checkmark"></span>
+                <span>Contiene Uova</span>
+              </label>
+              <label class="checkbox-container">
+                <input type="checkbox" id="new-allergen-soia">
+                <span class="checkbox-checkmark"></span>
+                <span>Contiene Soia</span>
+              </label>
+              <label class="checkbox-container">
+                <input type="checkbox" id="new-allergen-pesce">
+                <span class="checkbox-checkmark"></span>
+                <span>Contiene Pesce</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" id="btn-close-modal-footer" class="btn" onclick="document.getElementById('add-food-modal').classList.remove('open')">Annulla</button>
+            <button type="submit" class="btn btn-accent">Salva Alimento</button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
