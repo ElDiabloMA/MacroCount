@@ -23,6 +23,9 @@ Fai semplicemente doppio clic sul file `index.html` per aprirlo direttamente nel
 1. Fai doppio clic su `start.bat`.
 2. Scegli `1` per la finestra desktop nativa o `2` per il browser web.
 
+### Opzione 3: Dal seguente link:
+https://eldiabloma.github.io/MacroCount/
+
 ---
 
 ## 🛠️ Tecnologie Utilizzate
